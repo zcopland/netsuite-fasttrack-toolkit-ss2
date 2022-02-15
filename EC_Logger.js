@@ -1,11 +1,7 @@
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 (function (factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
@@ -89,13 +85,13 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         var title = rest[0], details = rest[1];
         var prefix = '';
         if (exports.includeCorrelationId) {
-            prefix += "".concat(exports.correlationId, ">");
+            prefix += exports.correlationId + ">";
         }
         // prefix all loggers except the 'default' one used by top level code
         if (logger.id !== 'default') {
-            prefix += "[".concat(logger.id, "]");
+            prefix += "[" + logger.id + "]";
         }
-        nslog[toNetSuiteLogLevel(loglevel)]({ title: "".concat(prefix, " ").concat(title), details: details });
+        nslog[toNetSuiteLogLevel(loglevel)]({ title: prefix + " " + title, details: details });
     }
     /**
      * Log appender targeting the NS execution log. This is the default appender for everything except Client scripts
@@ -119,7 +115,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             for (var _i = 1; _i < arguments.length; _i++) {
                 rest[_i - 1] = arguments[_i];
             }
-            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.debug, logger], rest, false));
+            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.debug, logger], rest));
         };
         /**
          * Info about info
@@ -131,28 +127,28 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             for (var _i = 1; _i < arguments.length; _i++) {
                 rest[_i - 1] = arguments[_i];
             }
-            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.info, logger], rest, false));
+            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.info, logger], rest));
         };
         ExecutionLogAppender.prototype.warn = function (logger) {
             var rest = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 rest[_i - 1] = arguments[_i];
             }
-            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.warn, logger], rest, false));
+            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.warn, logger], rest));
         };
         ExecutionLogAppender.prototype.error = function (logger) {
             var rest = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 rest[_i - 1] = arguments[_i];
             }
-            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.error, logger], rest, false));
+            log.apply(void 0, __spreadArray([aurelia_logging_1.logLevel.error, logger], rest));
         };
         return ExecutionLogAppender;
     }());
     exports.ExecutionLogAppender = ExecutionLogAppender;
     // instantiate the default logger and set it's logging level to the most verbose - this is used as
     // the 'main' logger by consumers
-    var defaultLogger = (0, aurelia_logging_1.getLogger)('default');
+    var defaultLogger = aurelia_logging_1.getLogger('default');
     defaultLogger.setLevel(aurelia_logging_1.logLevel.debug);
     // maps aurelia numeric levels to NS string level names
     function toNetSuiteLogLevel(level) {
@@ -170,7 +166,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
     }
     function getGovernanceMessage(governanceEnabled) {
-        return governanceEnabled ? "governance: ".concat(runtime.getCurrentScript().getRemainingUsage()) : undefined;
+        return governanceEnabled ? "governance: " + runtime.getCurrentScript().getRemainingUsage() : undefined;
     }
     /**
      * (taken from lodash https://github.com/lodash/lodash/blob/a0a3a6af910e475d8dd14dabc452f957e436e28b/findKey.js)
@@ -267,7 +263,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         var level = findKey(aurelia_logging_1.logLevel, function (o) { return o === (config.logLevel || aurelia_logging_1.logLevel.debug); });
         return aop.around(methodsToLogEntryExit, function (invocation) {
             // record function entry with details for every method on our explore object
-            var entryTitle = "Enter ".concat(invocation.method, "() ").concat(getGovernanceMessage(withGovernance));
+            var entryTitle = "Enter " + invocation.method + "() " + getGovernanceMessage(withGovernance);
             var entryDetail = withArgs ? arguments[0].arguments : null;
             logger[level](entryTitle, entryDetail);
             var startTime = Date.now();
@@ -276,9 +272,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             if (withProfiling) {
                 var elapsedMilliseconds = Date.now() - startTime;
                 var elapsedMinutes = ((elapsedMilliseconds / 1000) / 60).toFixed(2);
-                elapsedMessage = "".concat(elapsedMilliseconds, "ms = ").concat(elapsedMinutes, " minutes");
+                elapsedMessage = elapsedMilliseconds + "ms = " + elapsedMinutes + " minutes";
             }
-            var exitTitle = "Exit ".concat(invocation.method, "(): ").concat(elapsedMessage, " ").concat(getGovernanceMessage(withGovernance));
+            var exitTitle = "Exit " + invocation.method + "(): " + elapsedMessage + " " + getGovernanceMessage(withGovernance);
             var exitDetail = withReturnValue ? retval : null;
             logger[level](exitTitle, exitDetail);
             return retval;
@@ -318,7 +314,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
      */
     function addConsoleAppender(alc) {
         console.debug('** adding console appender **');
-        (0, aurelia_logging_1.addAppender)(new alc.ConsoleAppender());
+        aurelia_logging_1.addAppender(new alc.ConsoleAppender());
         defaultLogger.debug('added console appender');
     }
     // if we're running in nodejs (i.e. unit tests) load the console appender using node require()
@@ -329,5 +325,5 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         require(['./aurelia-logging-console'], addConsoleAppender);
     // otherwise go ahead and log to the execution log (assume server-side suitescript)
     else
-        (0, aurelia_logging_1.addAppender)(new ExecutionLogAppender());
+        aurelia_logging_1.addAppender(new ExecutionLogAppender());
 });
