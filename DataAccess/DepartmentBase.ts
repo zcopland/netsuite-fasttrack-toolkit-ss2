@@ -4,7 +4,7 @@ import * as record from 'N/record'
 /**
  * NetSuite Department record type
  */
-export class Department extends NetsuiteRecord {
+export class DepartmentBase extends NetsuiteRecord {
     /**
      * External ID
      */
